@@ -65,7 +65,7 @@ profit_age_wip <- profit_nh_base %>% left_join(nh_roster_age_wip)
 profit_age_sex_wip <- profit_ed_age_wip %>% left_join(nh_roster_sex_wip)
 profit_age_sex_ed_wip <- profit_ed_age_sex_wip %>% left_join(nh_ed_wip)
 
-nh_base <- profit_ed_age_sex_wip %>% left_join(nh_field_help_wip)
+nh_propfile_base <- profit_ed_age_sex_wip %>% left_join(nh_field_help_wip)
 
 
 
