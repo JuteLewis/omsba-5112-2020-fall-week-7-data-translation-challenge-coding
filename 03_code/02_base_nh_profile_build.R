@@ -62,10 +62,20 @@ nh_field_help_wip <- select(nh_field_help_wip,"nh", "clust","s8cq17a",
 # Following code joins ed, field_help, sex wip dataframes with nh_profit_base ----
 # Following code does not intergate lit due to the different dataframe structure
 profit_age_wip <- profit_nh_base %>% left_join(nh_roster_age_wip)
-profit_age_sex_wip <- profit_ed_age_wip %>% left_join(nh_roster_sex_wip)
-profit_age_sex_ed_wip <- profit_ed_age_sex_wip %>% left_join(nh_ed_wip)
+profit_age_sex_wip <- profit_age_wip %>% left_join(nh_roster_sex_wip)
+profit_age_sex_ed_wip <- profit_age_sex_wip %>% left_join(nh_ed_wip)
 
-nh_propfile_base <- profit_ed_age_sex_wip %>% left_join(nh_field_help_wip)
+nh_profile_base <- profit_age_sex_ed_wip %>% left_join(nh_field_help_wip) %>% 
+  rename(profit = "agri1c")
+
+# Adding a mutate column to add total family size to profile.
+nh_profile_base <- mutate(nh_profile_base, family_size = Male + Female)
+
+# Converting NA to 0 for calculating family size
+nh_profile_base[is.na(nh_profile_base)] = 0
+
+test_df <- filter(nh_profile_base, district == c(3, 4, 6, 10, 11, 12, 13, 14))
+
 
 
 
