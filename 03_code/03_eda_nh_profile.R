@@ -12,43 +12,36 @@ bkwd_base <- lm(profit ~ factor(district) + factor(s2aq2) +
 summary(bkwd_base)
 
 ggplot(bkwd_base, aes(x=rstandard(bkwd_base))) +
-  geom_histogram(binwidth = .5) +
+  geom_histogram(binwidth = .10) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
        title = "Assumption 6 (Normality) Review for Bkwd Base") 
-# ASSESSMENT - Error is not normally distributed with a Right tail.
 
 ggplot(bkwd_base, aes(x = fitted(bkwd_base), y = rstandard(bkwd_base))) + 
   geom_point() + 
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
        title = "Constant Varaince Review for Bkwd Base") 
-#ASSESSMENT - Model is not very good.  There is a large curve in the mean.
-
-# bkwd_1 removing age since it has the largest p value
 
 bkwd_1 <- lm(profit ~ factor(district) + factor(s2aq2) +
             male + female + male_help + male_help + female_help, 
             data = nh_profile_base)
 summary(bkwd_1)
 
-# Because a few farms have large male and female hired support investigating the 
-# impact having the ability to hire large group of help has on profitability
-
-bkwd_1_a <- lm(profit ~ factor(district) + factor(s2aq2) +
+bkwd_1_a <- lm(profit ~ factor(district) + factor(s2aq2) + av_hh_age +
                male + female + male_help + I(male_help^2) + female_help, 
              data = nh_profile_base)
 summary(bkwd_1_a)
 
 ggplot(bkwd_1_a, aes(x=rstandard(bkwd_1_a))) +
-  geom_histogram(binwidth = .25) +
+  geom_histogram(binwidth = .10) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review for Bkwd Base 1 a") 
+       title = "Assumption 6 (Normality) Review for Bkwd Base 1a") 
 
 ggplot(bkwd_1_a, aes(x = fitted(bkwd_1_a), y = rstandard(bkwd_1_a))) + 
   geom_point() + 
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
-       title = "Constant Varaince Review Bkwd Base 1 a") 
+       title = "Constant Varaince Review Bkwd Base 1a") 
 
 # Add the quadratic for male help greatly improved the fit of the model.  WIll try 
 # adding a female help quadratic. 
@@ -59,9 +52,9 @@ bkwd_1_b <- lm(profit ~ factor(district) + factor(s2aq2) +
 summary(bkwd_1_b)
 
 ggplot(bkwd_1_b, aes(x=rstandard(bkwd_1_b))) +
-  geom_histogram(binwidth = .25) +
+  geom_histogram(binwidth = .10) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review for Bkwd Base 1 b") 
+       title = "Assumption 6 (Normality) Review for Bkwd Base 1b") 
 
 ggplot(bkwd_1_b, aes(x = fitted(bkwd_1_b), y = rstandard(bkwd_1_b))) + 
   geom_point() + 

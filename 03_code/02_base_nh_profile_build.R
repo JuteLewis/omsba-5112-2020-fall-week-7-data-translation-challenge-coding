@@ -15,12 +15,12 @@ nh_field_help_wip <- read_dta("01_raw_data/glss4_new/sec8c1.dta")
 
 
 # Data cleansing and variable aggregation code ----
-# Following code selected the desired variables removes NA then unites nh and clust 
-# into a key for joins. Since there is a unique nh number for each clust.  
-# The combination of nh and clust provide unique id's for each house hold.
+# Following code selects the desired variables, removes NA's, then unites nh and clust 
+# into a key for joins. Since there is a unique nh number for each clust,  
+# The combination of nh and clust provide unique id's for each household.
 
-# The code groups the dataframe by key then summaries the mean of the 
-# family age, total male and female members of house. 
+# The following code (age_wip) groups the dataframe by key then summaries the mean of the 
+# family age of each house. 
 nh_roster_age_wip <- select(nh_roster_wip, "nh", "clust", "agey") %>% 
   na.omit() %>% 
   unite(key, c("clust", "nh"), sep = "_") %>% 
@@ -28,7 +28,9 @@ nh_roster_age_wip <- select(nh_roster_wip, "nh", "clust", "agey") %>%
   summarise(agey = round(mean(agey), 1)) %>% 
   rename(av_hh_age = "agey")
 
-# Following code converts sex to a factor to counting
+# Following code expands on the above by converting sex from a numeric type
+# to a factor type for counting (summing) the total number of male and female members.
+# The code then pivots the dataframe to make male and female separte valiables.
 nh_roster_sex_wip <- select(nh_roster_wip, "nh", "clust", factor("sex")) %>% 
   na.omit() %>% 
   unite(key, c("clust", "nh"), sep = "_") %>% 
@@ -64,23 +66,21 @@ nh_profile_base_wip <- nh_profile_base_wip %>%  left_join(nh_education_profile_b
 
 # Following code joins age, sex, field_help, and profit dataframes with nh_profile_base ----
 nh_profile_base_wip <- nh_profile_base_wip %>%  left_join(nh_ed_wip)
-
 nh_profile_base_wip <- nh_profile_base_wip %>% left_join(nh_roster_age_wip)
 nh_profile_base_wip <- nh_profile_base_wip %>% left_join(nh_roster_sex_wip)
 nh_profile_base_wip <- nh_profile_base_wip %>% left_join(nh_field_help_wip)
 
-# Adding a mutate column to add total family size to profile.
+# The following code adds a mutate column to add total family size to profile.
 nh_profile_base_wip <- mutate(nh_profile_base_wip, family_size = male + female)
 
-# Converting NA to 0 for calculating family size
+# The following code converting NA to 0 for calculating family size
 nh_profile_base_wip[is.na(nh_profile_base_wip)] = 0
 
+# The following code reorganizes the order of the dataframe's variables
 nh_profile_base <- nh_profile_base_wip[c("key", "region", "district", "male", 
                     "female", "family_size", "av_hh_age", "s2aq2", "male_help",
                     "female_help", "profit")]
 
-
-test_df <- filter(nh_profile_base, district == c(3, 4, 6, 10, 11, 12, 13, 14))
 
 
 
