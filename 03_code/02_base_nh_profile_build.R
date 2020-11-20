@@ -58,7 +58,6 @@ nh_field_help_wip <- select(nh_field_help_wip,"nh", "clust","s8cq17a",
   summarise(sum(s8cq17a), sum(s8cq17b)) %>% 
   rename(male_help = "sum(s8cq17a)", female_help = "sum(s8cq17b)")
   
-
 # Following code joins education wip and literacy wip and joins education profile ----
 # with nh_profile_base.  
 nh_education_profile_base <- nh_ed_wip %>% left_join(nh_lit_wip)

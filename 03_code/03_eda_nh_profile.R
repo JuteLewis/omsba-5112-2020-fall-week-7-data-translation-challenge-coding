@@ -1,3 +1,7 @@
+# A mom texts, “Hi! Son, what does IDK, LY, & TTYL mean?” He texts back, 
+# “I Don’t Know, Love You, & Talk To You Later.” The mom texts him, 
+# “It’s ok, don’t worry about it. I’ll ask your sister, love you too.”
+
 # Initial Descriptive Stat of nh profile ----
 summary(nh_profile_base)
 
@@ -12,7 +16,7 @@ bkwd_base <- lm(profit ~ factor(district) + factor(s2aq2) +
                 av_hh_age + male + female + male_help + female_help, 
                 data = nh_profile_base)
 summary(bkwd_base)
-
+# Model fit tests
 ggplot(bkwd_base, aes(x=rstandard(bkwd_base))) +
   geom_histogram(binwidth = .10) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
@@ -30,7 +34,8 @@ bkwd_1 <- lm(profit ~ factor(district) + factor(s2aq2) +
             data = nh_profile_base)
 summary(bkwd_1)
 
-# Following code expands the bkwd_1 model by exploring the affects of quadratic
+# Following code expands the bkwd_1 model by exploring the affects of introducing 
+# a quadratic variant of male_help
 bkwd_1_a <- lm(profit ~ factor(district) + factor(s2aq2) + av_hh_age +
                male + female + male_help + I(male_help^2) + female_help, 
              data = nh_profile_base)
@@ -46,8 +51,11 @@ ggplot(bkwd_1_a, aes(x = fitted(bkwd_1_a), y = rstandard(bkwd_1_a))) +
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
        title = "Constant Varaince Review Bkwd Base 1a") 
+#ASSESSMENT - The bkwd_1_a has evaluated out to be the best fitted model 
+# explaining the influence of the variables on expected annual household profit
 
-# The following model expands the quadratic exploration. 
+# The following model expands the quadratic exploration by introducing a 
+# quadratic variation of female_help. 
 bkwd_1_b <- lm(profit ~ factor(district) + factor(s2aq2) +
                  male + female + male_help + I(male_help^2) + female_help + 
                  I(female_help^2), data = nh_profile_base)
@@ -64,12 +72,12 @@ ggplot(bkwd_1_b, aes(x = fitted(bkwd_1_b), y = rstandard(bkwd_1_b))) +
   labs(x = "Profit", y = "Standardized Residuals", 
        title = "Constant Varaince Review Bkwd Base 1 b") 
 
-# bkwd_2 alternates the district factor and education factor assessing if any new 
-# levels take on statistical significance  
+# bkwd_2  (a and b) alternates the district factor and education factor assessing 
+# if any new levels take on statistical significance  
 bkwd_2_a <- lm(profit ~ factor(s2aq2) + male + female + male_help +
                female_help, data = nh_profile_base)
 summary(bkwd_2_a)
-
+# Model fit test
 ggplot(bkwd_2_a, aes(x=rstandard(bkwd_2_a))) +
   geom_histogram(binwidth = .25) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
@@ -84,7 +92,7 @@ ggplot(bkwd_2_a, aes(x = fitted(bkwd_2_a), y = rstandard(bkwd_2_a))) +
 bkwd_2_b <- lm(profit ~ factor(district) + male + female + male_help +
                  female_help, data = nh_profile_base)
 summary(bkwd_2_b)
-
+# Model fit test
 ggplot(bkwd_2_b, aes(x=rstandard(bkwd_2_b))) +
   geom_histogram(binwidth = .25) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
@@ -95,12 +103,14 @@ ggplot(bkwd_2_b, aes(x = fitted(bkwd_2_b), y = rstandard(bkwd_2_b))) +
   geom_smooth() + 
   labs(x = "Proft", y = "Standardized Residuals", 
        title = "Constant Varaince Review") 
+# ASSESSMENT - The district variable proved a better variable (influence)
+# on expect annual household profit
 
 # The following model - bkwd_3 - retains the district factor but 
 # removes the female help variable
 bkwd_3 <- lm(profit ~ factor(district)+ male + female + male_help, data = nh_profile_base)
 summary(bkwd_3)
-
+# Model fit test
 ggplot(bkwd_3, aes(x=rstandard(bkwd_3))) +
   geom_histogram(binwidth = .5) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
@@ -115,7 +125,7 @@ ggplot(bkwd_3, aes(x = fitted(bkwd_3), y = rstandard(bkwd_3))) +
 # The following code - bkwd_4 - removes the household female variable.
 bkwd_4 <- lm(profit ~ factor(district)+ male + male_help, data = nh_profile_base)
 summary(bkwd_4)
-
+# model fit test
 ggplot(bkwd_4, aes(x=rstandard(bkwd_4))) +
   geom_histogram(binwidth = .25) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
@@ -124,7 +134,7 @@ ggplot(bkwd_4, aes(x=rstandard(bkwd_4))) +
 ggplot(bkwd_4, aes(x = fitted(bkwd_4), y = rstandard(bkwd_4))) + 
   geom_point() + 
   geom_smooth() + 
-  labs(x = "TBD", y = "Standardized Residuals", 
+  labs(x = "Profit", y = "Standardized Residuals", 
        title = "Constant Varaince Review") 
 
 
