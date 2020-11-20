@@ -13,14 +13,14 @@ nh_profit_wip <- read_dta("01_raw_data/glss4_new/aggregates/agg2.dta")
 # Following code extracts variables and creates keys for joins 
 # into wip dataframes that will be joined later ----
 
-# Following code extracts the region, district, eanum, nh, and clust from sec0a ----
-# from the base_nh_id data frames.  
-# The unite code concatenating clust and nh to create a unique nh key for joins ---- 
+# Following code extracts the region, district, ecological zone, location code, nh, ---- 
+# and clust from sec0a  
+# The unite code concatenating clust and nh to create a unique nh key for joins
 # Since there is a unique nh number for each clust.  The combination of nh and clust 
 # provide unique id's for each house hold. 
 # WIP is work in progress and identifies partly processed data frames 
-nh_id_1_wip <- select(nh_id_1_wip, factor("region"), factor("district"), "nh", "clust") %>% 
-  unite(key, c("clust", "nh"), sep = "_")
+nh_id_1_wip <- select(nh_id_1_wip, factor("region"), factor("district"), "nh", "clust", 
+                      factor("ez"), factor("loc2")) %>% unite(key, c("clust", "nh"), sep = "_")
 
 # Following code extracts nh, clust, and corrected profit from base_nh_profit
 nh_profit_wip <- select(nh_profit_wip, "nh", "clust", "agri1c") %>% 

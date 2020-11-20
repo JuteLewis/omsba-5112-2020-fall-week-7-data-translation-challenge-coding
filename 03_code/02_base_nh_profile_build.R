@@ -76,8 +76,8 @@ nh_profile_base_wip <- mutate(nh_profile_base_wip, family_size = male + female)
 nh_profile_base_wip[is.na(nh_profile_base_wip)] = 0
 
 # The following code reorganizes the order of the dataframe's variables
-nh_profile_base <- nh_profile_base_wip[c("key", "region", "district", "male", 
-                    "female", "family_size", "av_hh_age", "s2aq2", "male_help",
+nh_profile_base <- nh_profile_base_wip[c("key", "region", "district", "ez", "loc2", 
+                    "male", "female", "family_size", "av_hh_age", "s2aq2", "male_help",
                     "female_help", "profit")]
 
 
