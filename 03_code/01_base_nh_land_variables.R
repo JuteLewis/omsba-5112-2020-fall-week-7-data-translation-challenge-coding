@@ -40,39 +40,36 @@ agri_equipment <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/
 income10$cropsv1 + income10$cropsv2 -> income10$crops   # Add revenue from cash crops (main outlet + other outlet) and create new variable
 
 income10 <-  select(income10, "clust", "nh", "crops", "cropcd") %>%
-  unite(key, c("clust", "nh"), sep = "_")  #%>%                    # transfer categorical value
+  unite(key, c("clust", "nh"), sep = "_")  %>%                    # transfer categorical value
   mutate(crop_name = case_when(cropcd == 0  ~'Cocoa_c',
                                cropcd == 1  ~'Coffee_c',
                                cropcd == 2  ~'Rubber_c',
                                cropcd == 3  ~'Coconut_c',
-                               cropcd == 4  ~'Oil palm_c',
+                               cropcd == 4  ~'Oil_palm_c',
                                cropcd == 5  ~'Plantain_c',
                                cropcd == 6  ~'Banana_c',
-                               cropcd == 7  ~'Oranges_c',
                                cropcd == 8  ~'Wood_c',
-                               cropcd == 10 ~'Cola nut_c',
+                               cropcd == 10 ~'Cola_nut_c',
                                cropcd == 11 ~'Kenef_c',
                                cropcd == 12 ~'Cotton_c',
-                               cropcd == 13 ~'Groundnut/peanut_c',
+                               cropcd == 13 ~'Groundnut_peanut_c',
                                cropcd == 14 ~'Tobacco_c',
                                cropcd == 15 ~'Pineapple_c',
-                               cropcd == 16 ~'Sugar cane_c',
+                               cropcd == 16 ~'Sugar_cane_c',
                                cropcd == 17 ~'Cassava_c',
                                cropcd == 18 ~'Yam_c',
                                cropcd == 19 ~'Potatoes_c',
                                cropcd == 21 ~'Maize_c',
                                cropcd == 22 ~'Rice_c',
-                               cropcd == 23 ~'Guinea corn/Sorghum/millet Ropes_c',
+                               cropcd == 23 ~'Guinea_corn_Sorghum_millet_Ropes_c',
                                cropcd == 24 ~'Tomatoes',
                                cropcd == 25 ~'Okro_c',
-                               cropcd == 26 ~'Garden egg/Egg plant_c',
-                               cropcd == 27 ~'Beans/peas',
+                               cropcd == 26 ~'Garden_egg_Egg_plant_c',
+                               cropcd == 27 ~'Beans_peas',
                                cropcd == 28 ~'Pepper_c',
-                               cropcd == 29 ~'Leafy vegetables_c',
-                               cropcd == 30 ~'Other vegetables_c',
-                               cropcd == 31 ~'Other crops_c',
+                               cropcd == 29 ~'Leafy_vegetables_c',
+                               cropcd == 31 ~'Other_crops_c',
                                cropcd == 32 ~'Onion_c',
-                               cropcd == 33 ~'Avocado pear_c',
                                cropcd == 34 ~'Mango_c',
                                cropcd == 35 ~'Pawpaw_c')) %>%
   group_by(key, crop_name) %>%
@@ -214,3 +211,22 @@ expenditure7<- select(expenditure7, -months) %>%
 
 expenditure7_final <- expenditure7 %>%
   pivot_wider(id_cols = key, names_from = homagrcd, values_from = hp_all_years, values_fill = 0)
+
+
+
+# create a data frame for income and profit
+inc_prof_data_frame <- left_join(profit,income10_final, by = "key") %>%
+  left_join(income11_final, by = "key") %>% 
+  left_join(income12_final, by = "key") %>%
+  left_join(income13_final, by = "key") 
+
+inc_prof_data_frame[is.na(inc_prof_data_frame)] = 0
+
+profit_vs_inc_cash_crops <- lm(agri1c ~ Cocoa_c + Coffee_c + Rubber_c + Coconut_c + Oil_palm_c + Plantain_c +
+                                 Banana_c + Wood_c + Cola_nut_c + Kenef_c + Cotton_c + Groundnut_peanut_c +
+                                 Tobacco_c + Pineapple_c + Sugar_cane_c + Cassava_c + Yam_c + Potatoes_c + Maize_c +
+                                 Rice_c + Guinea_corn_Sorghum_millet_Ropes_c + Tomatoes + Okro_c + Garden_egg_Egg_plant_c +
+                                 Beans_peas + Pepper_c + Leafy_vegetables_c + Other_crops_c +
+                                 Onion_c + Mango_c, data = inc_prof_data_frame)
+summary(profit_vs_inc_cash_crops)
+
