@@ -37,7 +37,7 @@ agri_equipment <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/
 
 
 # income variables transforming and wrangling
-income10$cropsv1 + income10$cropsv2 -> income10$crops   # Add revenue from cash crops (main outlet + other outlet) and create new variable
+income10$cropsv1 + income10$cropsv2 -> income10$crops    # Add revenue from cash crops (main outlet + other outlet) and create new variable
 
 income10 <-  select(income10, "clust", "nh", "crops", "cropcd") %>%
   unite(key, c("clust", "nh"), sep = "_")  %>%                    # transfer categorical value
@@ -81,12 +81,12 @@ income10_final <- income10 %>%
 
 
 income11 <- income11 %>% unite(key, c("clust", "nh"), sep = "_") %>%      # transfer categorical value
-  mutate( root_name = case_when(rootcd == 5 ~ "Oil palm_r",
+  mutate( root_name = case_when(rootcd == 5 ~ "Oil_palm_r",
                                 rootcd == 6 ~ "Plantain_r",
                                 rootcd == 7 ~ "Banana_r",
                                 rootcd == 8 ~ "Oranges_r",
-                                rootcd == 9 ~ "Other fruit trees_r",
-                                rootcd == 11 ~ "Cola nut_r",
+                                rootcd == 9 ~ "Other_fruit_trees_r",
+                                rootcd == 11 ~ "Cola_nut_r",
                                 rootcd == 16 ~ "Pineapple_r",
                                 rootcd == 18 ~ "Cassava_r",
                                 rootcd == 19 ~ "Yam_r",
@@ -94,12 +94,12 @@ income11 <- income11 %>% unite(key, c("clust", "nh"), sep = "_") %>%      # tran
                                 rootcd == 21 ~ "Potatoes_r",
                                 rootcd == 25 ~ "Tomatoes_r",
                                 rootcd == 26 ~ "Okro_r",
-                                rootcd == 27 ~ "Garden egg/Egg plant_r",
+                                rootcd == 27 ~ "Garden_egg_Egg_plant_r",
                                 rootcd == 29 ~ "Pepper_r",
-                                rootcd == 30 ~ "Leafy vegetables_r",
-                                rootcd == 31 ~ "Other vegetables_r",
+                                rootcd == 30 ~ "Leafy_vegetables_r",
+                                rootcd == 31 ~ "Other_vegetables_r",
                                 rootcd == 33 ~ "Onion_r",
-                                rootcd == 34 ~ "Avocado pear_r",
+                                rootcd == 34 ~ "Avocado_pear_r",
                                 rootcd == 35 ~ "Mango_r",
                                 rootcd == 36 ~ "Pawpaw_r")) %>%
   group_by(key, root_name) %>%
@@ -116,16 +116,16 @@ income12_final <- income12 %>% unite(key, c("clust", "nh"), sep = "_")
 
 
 income13 <- income13 %>% unite(key, c("clust", "nh"), sep = "_") %>%      # transfer categorical value
-  mutate(trans_crops_name = case_when(proagrcd == 1  ~'Maize flour_tc',
-                                      proagrcd == 2  ~'Flour from other grains_tc',
-                                      proagrcd == 3  ~'Husked/polished riceHusked/polished rice_tc',
-                                      proagrcd == 4  ~'Home brewed drink_tc',
-                                      proagrcd == 5  ~'Cassava flour_tc',
-                                      proagrcd == 6  ~'Shelled groundnut_tc',
-                                      proagrcd == 7  ~'Processed fish_tc',
+  mutate(trans_crops_name = case_when(proagrcd == 1  ~'Maize_flour_tc',
+                                      proagrcd == 2  ~'Flour_from_other_grains_tc',
+                                      proagrcd == 3  ~'Husked_polished_riceHusked_polished_rice_tc',
+                                      proagrcd == 4  ~'Home_brewed_drink_tc',
+                                      proagrcd == 5  ~'Cassava_flour_tc',
+                                      proagrcd == 6  ~'Shelled_groundnut_tc',
+                                      proagrcd == 7  ~'Processed_fish_tc',
                                       proagrcd == 8  ~'Gari_tc',
                                       proagrcd == 9 ~'Sheabutter_tc',
-                                      proagrcd == 10 ~'Other nuts_tc',
+                                      proagrcd == 10 ~'Other_nuts_tc',
                                       proagrcd == 11 ~'Other_tc')) %>%
   group_by(key, trans_crops_name) %>%
   summarise(inctrcrp_all_years = sum(inctrcrp))   # eliminate duplicate value
@@ -222,6 +222,9 @@ inc_prof_data_frame <- left_join(profit,income10_final, by = "key") %>%
 
 inc_prof_data_frame[is.na(inc_prof_data_frame)] = 0
 
+
+# Regression models profit vs. income
+# profit vs. income 10
 profit_vs_inc_cash_crops <- lm(agri1c ~ Cocoa_c + Coffee_c + Rubber_c + Coconut_c + Oil_palm_c + Plantain_c +
                                  Banana_c + Wood_c + Cola_nut_c + Kenef_c + Cotton_c + Groundnut_peanut_c +
                                  Tobacco_c + Pineapple_c + Sugar_cane_c + Cassava_c + Yam_c + Potatoes_c + Maize_c +
@@ -230,3 +233,24 @@ profit_vs_inc_cash_crops <- lm(agri1c ~ Cocoa_c + Coffee_c + Rubber_c + Coconut_
                                  Onion_c + Mango_c, data = inc_prof_data_frame)
 summary(profit_vs_inc_cash_crops)
 
+
+# profit vs. income 11
+profit_vs_inc_roots_fruit_vegetables <- lm(agri1c ~ Oil_palm_r + Plantain_r + Banana_r + Oranges_r + Other_fruit_trees_r + Cola_nut_r +
+                                             Pineapple_r + Cassava_r + Yam_r + Cocoyam_r + Potatoes_r + Tomatoes_r + Okro_r +
+                                             Garden_egg_Egg_plant_r + Pepper_r + Leafy_vegetables_r + Other_vegetables_r + Onion_r +
+                                             Avocado_pear_r + Mango_r + Pawpaw_r, data = inc_prof_data_frame)
+summary(profit_vs_inc_roots_fruit_vegetables)
+
+
+# profit vs. income 12
+profit_vs_inc_other_agri <- lm(agri1c ~ othaginc, data = inc_prof_data_frame)
+summary(profit_vs_inc_roots_fruit_vegetables)
+
+
+# profit vs. income 13
+profit_vs_inc_trans_crop <- lm(agri1c ~ Maize_flour_tc + Flour_from_other_grains_tc + Husked_polished_riceHusked_polished_rice_tc +
+                                 Home_brewed_drink_tc + Cassava_flour_tc + Shelled_groundnut_tc + Processed_fish_tc +
+                                 Gari_tc + Sheabutter_tc + Other_nuts_tc + Other_tc, data = inc_prof_data_frame)
+summary(profit_vs_inc_trans_crop)
+
+  
