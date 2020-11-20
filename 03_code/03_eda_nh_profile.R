@@ -33,7 +33,12 @@ bkwd_1 <- lm(profit ~ factor(district) + factor(s2aq2) +
             male + female + male_help + male_help + female_help, 
             data = nh_profile_base)
 summary(bkwd_1)
-
+# Model fit test
+ggplot(bkwd_1, aes(x = fitted(bkwd_1), y = rstandard(bkwd_1))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review Bkwd Base 1a") 
 # Following code expands the bkwd_1 model by exploring the affects of introducing 
 # a quadratic variant of male_help
 bkwd_1_a <- lm(profit ~ factor(district) + factor(s2aq2) + av_hh_age +
