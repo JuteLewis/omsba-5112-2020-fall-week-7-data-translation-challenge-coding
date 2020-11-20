@@ -41,7 +41,7 @@ ggplot(bkwd_1, aes(x = fitted(bkwd_1), y = rstandard(bkwd_1))) +
        title = "Constant Varaince Review Bkwd Base 1a") 
 # Following code expands the bkwd_1 model by exploring the affects of introducing 
 # a quadratic variant of male_help
-bkwd_1_a <- lm(profit ~ factor(district) + factor(s2aq2) + av_hh_age +
+bkwd_1_a <- lm(profit ~ factor(district) + factor(s2aq2) +
                male + female + male_help + I(male_help^2) + female_help, 
              data = nh_profile_base)
 summary(bkwd_1_a)
