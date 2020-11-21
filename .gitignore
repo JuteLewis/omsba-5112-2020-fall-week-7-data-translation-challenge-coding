@@ -2,5 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-.dta
+*.dta
 .DS_Store
+*.zip
+*.pdf
