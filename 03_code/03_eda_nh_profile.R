@@ -2,169 +2,373 @@
 # “I Don’t Know, Love You, & Talk To You Later.” The mom texts him, 
 # “It’s ok, don’t worry about it. I’ll ask your sister, love you too.”
 
-# Initial Descriptive Stat of nh profile ----
+# Initial Descriptive Stat of nh-profile_base ----
 summary(nh_profile_base)
+# Initial Descriptive Stat - Correlation of independent variables
+cor_df <- select(nh_profile_base, "male", "female", "family_size", "av_hh_age",
+          "male_help", "female_help","profit")
+round(cor(cor_df), 2)
 
-# Initial model examining profit against household district, ecological zone, ----
-# location code, average age, average years of education, and number of male 
-# and female household members.
-
-# Variable selection and model build 
-# Using Backward Variable Selection
+# Initial/base model examining profit against all independent variables ----
 
 # Following model includes all variables
-bkwd_base <- lm(profit ~ factor(district) + factor(s2aq2) + factor(ez) + 
-                factor(loc2) + av_hh_age + male + female + male_help + 
-                female_help, data = nh_profile_base)
-summary(bkwd_base)
+base_model <- lm(profit ~ factor(region) + factor(district) + factor(ez) + factor(loc2) + 
+           male + female + family_size + av_hh_age + factor(s2aq2) + factor(s2cq1) + 
+           factor(s2cq2) + factor(s2cq3) + factor(s2cq4) + factor(s2cq5) +
+           male_help + female_help, data = nh_profile_base)
+summary(base_model)
 # Model fit tests
-ggplot(bkwd_base, aes(x=rstandard(bkwd_base))) +
+ggplot(base_model, aes(x=rstandard(base_model))) +
   geom_histogram(binwidth = .10) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review for bkwd_base") 
+       title = "Assumption 6 (Normality) Review for base model") 
 
-ggplot(bkwd_base, aes(x = fitted(bkwd_base), y = rstandard(bkwd_base))) + 
+ggplot(base_model, aes(x = fitted(base_model), y = rstandard(base_model))) + 
   geom_point() + 
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
-       title = "Constant Varaince Review for bkwd_base") 
+       title = "Constant Varaince Review for base model") 
 
-# Following code removes the education and ecological zone variables
-# The education factor levels evaluated to being statically insignificant and 
-# account for a small portion of the model.. The models show that 
-#ecological variable introduce more heterskedasticity.
-bkwd_1 <- lm(profit ~ factor(district) + factor(loc2) + av_hh_age + male + 
-            female + male_help + male_help + female_help, 
-            data = nh_profile_base)
-summary(bkwd_1)
+# model_1 ----
+# Following looks to identify the best model by using a backward variable process:
+# removing code that code has the lowest p-score. All education (s2aq2) factors 
+# were statically insignificant thus s2aq2 was removed as a variable. Additionally, 
+# singe family_size is highly correlated with the count of male and female household
+# members it was also removed.
+
+model_1 <- lm(profit ~ factor(region) + factor(district) + factor(ez) + factor(loc2) + 
+                   male + female + av_hh_age + factor(s2cq1) + 
+                   factor(s2cq2) + factor(s2cq3) + factor(s2cq4) + factor(s2cq5) +
+                   male_help + female_help, data = nh_profile_base)
+summary(model_1)
 # Model fit test
-ggplot(bkwd_1, aes(x = fitted(bkwd_1), y = rstandard(bkwd_1))) + 
+ggplot(model_1, aes(x=rstandard(model_1))) +
+  geom_histogram(binwidth = .25) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Model 1 Assumption 6 (Normality) Review") 
+
+ggplot(model_1, aes(x = fitted(model_1), y = rstandard(model_1))) + 
   geom_point() + 
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
-       title = "Constant Varaince Review Bkwd Base 1a") 
-# Following code expands the bkwd_1 model by exploring the affects of introducing 
-# a quadratic variant of male_help
-bkwd_1_a <- lm(profit ~ factor(district) + factor(loc2) + av_hh_age +
-              male + female + male_help + I(male_help^2) + female_help, 
-              data = nh_profile_base)
-summary(bkwd_1_a)
+       title = "Model 1 Constant Varaince Review") 
+
+
+# Model 2 ----
+# Except for being able to speak a dominate language in the country would directly influence 
+# the ability to conduct business and make a profit. 
+# Most of the remaining levels in the literacy factors were not statistically significant.
+# The literacy factor for what languages did nh read and write were kept with the others removed. 
+
+model_2 <- lm(profit ~ factor(region) + factor(district) + factor(ez) + factor(loc2) + 
+                male + female + av_hh_age + factor(s2cq2) + factor(s2cq4) + male_help + 
+                female_help, data = nh_profile_base)
+summary(model_2)
 # Model fit tests 
-ggplot(bkwd_1_a, aes(x=rstandard(bkwd_1_a))) +
+ggplot(model_2, aes(x=rstandard(model_2))) +
   geom_histogram(binwidth = .10) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review for bkwd_base_1_a") 
+       title = "Assumption 6 (Normality) Review for model 2") 
 
-ggplot(bkwd_1_a, aes(x = fitted(bkwd_1_a), y = rstandard(bkwd_1_a))) + 
+ggplot(model_2, aes(x = fitted(model_2), y = rstandard(model_2))) + 
   geom_point() + 
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
-       title = "Constant Varaince Review bkwd_1_a") 
-#ASSESSMENT - The bkwd_1_a has evaluated out to be the best fitted model 
-# explaining the influence of the variables on expected annual household profit
+       title = "Constant Varaince Review model 2") 
 
-# The following model expands the quadratic exploration by introducing a 
-# quadratic variation of female_help. 
-bkwd_1_b <- lm(profit ~ factor(district) + factor(ez) + factor(loc2) 
-               + av_hh_age + male + female + male_help + I(male_help^2) + female_help + 
-                 I(female_help^2), data = nh_profile_base)
-summary(bkwd_1_b)
+# Model 3 ----
+# The literacy variables - again except for level 4 - were statistically not significant.
+# These variables are removed in model_3
+model_3 <- lm(profit ~ factor(region) + factor(district) + factor(ez) + factor(loc2) + 
+                male + female + av_hh_age + male_help + 
+                female_help, data = nh_profile_base)
+summary(model_3)
 # Model fit test
-ggplot(bkwd_1_b, aes(x=rstandard(bkwd_1_b))) +
+ggplot(model_3, aes(x=rstandard(model_3))) +
   geom_histogram(binwidth = .10) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review for Bkwd Base 1b") 
+       title = "Assumption 6 (Normality) Review for model 3") 
 
-ggplot(bkwd_1_b, aes(x = fitted(bkwd_1_b), y = rstandard(bkwd_1_b))) + 
+ggplot(model_3, aes(x = fitted(model_3), y = rstandard(model_3))) + 
   geom_point() + 
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
-       title = "Constant Varaince Review Bkwd Base 1 b") 
+       title = "Constant Varaince Review model 3") 
 
-# bkwd_2  (a, b, c) alternates the district, ecological and loc factors 
-# assessing if any new levels take on statistical significance  
-bkwd_2_a <- lm(profit ~ factor(ez) + av_hh_age + male + female + male_help +
-               female_help, data = nh_profile_base)
-summary(bkwd_2_a)
+# Model 4 ----
+# While model 3 showed that the independent variables and most of the region, district
+# factor levels are statistically significant, the errors are not normally distributed 
+# with a right tail and the fitted v residuals dose not show constant variation.
+# Model four will remove the non-factor variable with the highest p-score - av_hh_age.   
+
+model_4 <- lm(profit ~ factor(region) + factor(district) + factor(ez) + factor(loc2) + 
+                male + female +  male_help + female_help, data = nh_profile_base)
+summary(model_4)
 # Model fit test
-ggplot(bkwd_2_a, aes(x=rstandard(bkwd_2_a))) +
+ggplot(model_4, aes(x=rstandard(model_4))) +
   geom_histogram(binwidth = .25) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
        title = "Assumption 6 (Normality) Review") 
 
-ggplot(bkwd_2_a, aes(x = fitted(bkwd_2_a), y = rstandard(bkwd_2_a))) + 
+ggplot(model_4, aes(x = fitted(model_4), y = rstandard(model_4))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review model 4") 
+
+# Model 5 ----
+# While model 4 showed that the independent variables and most of the region, district
+# factor levels are statistically significant, the errors are still not normally distributed 
+# with a right tail and the fitted v residuals dose not show constant variation.
+# Since district is a finer scale that region model 5 will remove region.  
+
+model_5 <- lm(profit ~ factor(district) + factor(ez) + factor(loc2) + 
+                male + female +  male_help + female_help, data = nh_profile_base)
+summary(model_5)
+# Model fit test
+ggplot(model_5, aes(x=rstandard(model_5))) +
+  geom_histogram(binwidth = .25) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_5, aes(x = fitted(model_5), y = rstandard(model_5))) + 
   geom_point() + 
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
        title = "Constant Varaince Review") 
 
-bkwd_2_b <- lm(profit ~ factor(loc2) + male + female + male_help + av_hh_age +
+# Model 6 ----
+# Model 5 showed that all factor levels for ecological zone and location have 
+# the lowest p-score when compared to the district factor. This could be because 
+# ecological zone and urban/rural levels are subsets to districts. Model 6 a-c will 
+# alternate the removal the district, ez and loc2 factor variables to assess impact . 
+
+model_6a <- lm(profit ~ factor(ez) + factor(loc2) + 
+                male + female +  male_help + female_help, data = nh_profile_base)
+summary(model_6a)
+# Model fit test
+ggplot(model_6a, aes(x=rstandard(model_6a))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_6a, aes(x = fitted(model_6a), y = rstandard(model_6a))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT - the residual v. fitted got worse and a noticeable right tail in the histogram. 
+
+model_6b <- lm(profit ~ factor(district) + factor(loc2) + 
+                 male + female +  male_help + female_help, data = nh_profile_base)
+summary(model_6b)
+# Model fit test
+ggplot(model_6b, aes(x=rstandard(model_6b))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_6b, aes(x = fitted(model_6b), y = rstandard(model_6b))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT - While the residual v. fitted improved it is still not very good
+# and the histogram still has a noticeable right tail in the histogram. 
+
+model_6c <- lm(profit ~ factor(district) + factor(ez) + 
+                 male + female +  male_help + female_help, data = nh_profile_base)
+summary(model_6c)
+# Model fit test
+ggplot(model_6c, aes(x=rstandard(model_6c))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_6c, aes(x = fitted(model_6c), y = rstandard(model_6c))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT - While the residual v. fitted is still not very good
+# the histogram improved with the left tail growing and a reduction the right tail.
+
+# Model 6 cont ----
+# Model 6 e-g will assess if there is an interaction in district, ez and loc variables since 
+# ex and loc2 can be subsets of district.
+model_6e <- lm(profit ~ factor(district) + factor(ez) + factor(loc2) + factor(district:ez) +
+                 male + female +  male_help + female_help, data = nh_profile_base)
+summary(model_6e)
+# Model fit test
+ggplot(model_6e, aes(x=rstandard(model_6e))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_6e, aes(x = fitted(model_6e), y = rstandard(model_6e))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT - The residual v. fitted improved greatly (probably the best so far) but the 
+# histogram worsened  with a lengthen of the right tail.
+# Model 6e_2 will expand on 6e by removing loc2 to determine is impact.  
+model_6e_2 <- lm(profit ~ factor(district * ez) +  male + female +  male_help + 
+                   female_help, data = nh_profile_base)
+summary(model_6e_2)
+
+ggplot(model_6e_2, aes(x=rstandard(model_6e_2))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_6e_2, aes(x = fitted(model_6e_2), y = rstandard(model_6e_2))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT - No significant change. 
+
+model_6f <- lm(profit ~ factor(district * loc2) + factor(ez) +  male + female +  male_help + 
+                   female_help, data = nh_profile_base)
+summary(model_6f)
+
+ggplot(model_6f, aes(x=rstandard(model_6f))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_6e_2, aes(x = fitted(model_6e_2), y = rstandard(model_6e_2))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT - The fitted v residuals worsened  
+
+model_6g <- lm(profit ~ factor(district) + factor(ez * loc2) +  male + female +  male_help + 
                  female_help, data = nh_profile_base)
-summary(bkwd_2_b)
+summary(model_6g)
+
+ggplot(model_6g, aes(x=rstandard(model_6g))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_6g, aes(x = fitted(model_6g), y = rstandard(model_6g))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+
+# Model 7 ----
+# Model 6e and g proved to be the best fit with the expected p-scores.
+# Model 7 will assess the impact the male, female, hired
+# help has on the profit.  Model 6e will be the base. 7a will remove the female 
+# help variable since it have the lowest p-score.
+model_7a <- lm(profit ~ factor(district * ez) + factor(loc2) +
+                 male + female + male_help, data = nh_profile_base)
+summary(model_7a)
 # Model fit test
-ggplot(bkwd_2_b, aes(x=rstandard(bkwd_2_b))) +
+ggplot(model_7a, aes(x=rstandard(model_7a))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_7a, aes(x = fitted(model_7a), y = rstandard(model_7a))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT: The histogram still has a right tail if not worse than 6e but 
+# residual v. fit appears to be the same.
+# Model 7b will remove female from the model
+model_7b <- lm(profit ~ factor(district * ez) + factor(loc2) +
+                 male + male_help, data = nh_profile_base)
+summary(model_7b)
+
+ggplot(model_7b, aes(x=rstandard(model_7b))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_7b, aes(x = fitted(model_7b), y = rstandard(model_7b))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT: the fit tests appear same as 7a
+
+# Model 8 ----
+# Model 8 will look at quadratics of male and other variable impact.
+model_8a <- lm(profit ~ factor(district * ez) + factor(loc2) +
+                 male + I(male^2) + male_help, data = nh_profile_base)
+summary(model_8a)
+
+ggplot(model_8a, aes(x=rstandard(model_8a))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_8a, aes(x = fitted(model_8a), y = rstandard(model_8a))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+#ASSESSMENT: Histogram still has right tail but residuals v. fit the best overall so far. 
+model_8b <- lm(profit ~ factor(district * ez) + factor(loc2) +
+                 male + I(male^2) + male_help + I(male_help^2), data = nh_profile_base)
+summary(model_8b)
+
+ggplot(model_8b, aes(x=rstandard(model_8b))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_8b, aes(x = fitted(model_8b), y = rstandard(model_8b))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+# Model 8c removes the help impact.  One hypothesis is because only a few farms have 
+# hired help in large qualities and they generally have higher profits,
+# the associate residual errors are bending the fit line.  
+model_8c <- lm(profit ~ factor(district * ez) + factor(loc2) +
+                 male + I(male^2), data = nh_profile_base)
+summary(model_8c)
+
+ggplot(model_8c, aes(x=rstandard(model_8c))) +
+  geom_histogram(binwidth = .1) +
+  labs(x = "Standardized Residuals", y = "Residual Count", 
+       title = "Assumption 6 (Normality) Review") 
+
+ggplot(model_8c, aes(x = fitted(model_8c), y = rstandard(model_8c))) + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(x = "Profit", y = "Standardized Residuals", 
+       title = "Constant Varaince Review") 
+
+#ASSESSMENT: 8b provides the best fit v residuals, as the x axis runs out to 8e+06
+# the mean is flatter than 8a which only runs out to 7.5e+06
+
+# Model 9 ----
+# Using 8b as a base the following ads back individual variables. 
+model_9a <- lm(profit ~ factor(district * ez) + factor(loc2) + male +
+               I(male^2) + male_help + I(male_help^2) + female_help, 
+               data = nh_profile_base)
+summary(model_9a)
+
+ggplot(model_9a, aes(x=rstandard(model_9a))) +
   geom_histogram(binwidth = .25) +
   labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review") 
+       title = "Model 9 Assumption 6 (Normality) Review") 
 
-ggplot(bkwd_2_b, aes(x = fitted(bkwd_2_b), y = rstandard(bkwd_2_b))) + 
+ggplot(model_9a, aes(x = fitted(model_9a), y = rstandard(model_9a))) + 
   geom_point() + 
   geom_smooth() + 
   labs(x = "Profit", y = "Standardized Residuals", 
        title = "Constant Varaince Review") 
+#ASSESSMENT: The female variable improved the fit but the histogram is still with a right tail
 
-bkwd_2_c <- lm(profit ~ factor(district) + av_hh_age + male + female + male_help +
-                 female_help, data = nh_profile_base)
-summary(bkwd_2_c)
-# Model fit test
-ggplot(bkwd_2_c, aes(x=rstandard(bkwd_2_c))) +
-  geom_histogram(binwidth = .25) +
-  labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review") 
-
-ggplot(bkwd_2_c, aes(x = fitted(bkwd_2_c), y = rstandard(bkwd_2_c))) + 
-  geom_point() + 
-  geom_smooth() + 
-  labs(x = "Profit", y = "Standardized Residuals", 
-       title = "Constant Varaince Review") 
-
-
-
-
-# ASSESSMENT - The district variable proved a better variable (influence)
-# on expect annual household profit
-
-# The following model - bkwd_3 - retains the district factor but 
-# removes the female help variable
-bkwd_3 <- lm(profit ~ factor(district)+ male + female + male_help, data = nh_profile_base)
-summary(bkwd_3)
-# Model fit test
-ggplot(bkwd_3, aes(x=rstandard(bkwd_3))) +
-  geom_histogram(binwidth = .5) +
-  labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review") 
-
-ggplot(bkwd_3, aes(x = fitted(bkwd_3), y = rstandard(bkwd_3))) + 
-  geom_point() + 
-  geom_smooth() + 
-  labs(x = "Profit", y = "Standardized Residuals", 
-       title = "Constant Varaince Review") 
-
-# The following code - bkwd_4 - removes the household female variable.
-bkwd_4 <- lm(profit ~ factor(district)+ male + male_help, data = nh_profile_base)
-summary(bkwd_4)
-# model fit test
-ggplot(bkwd_4, aes(x=rstandard(bkwd_4))) +
-  geom_histogram(binwidth = .25) +
-  labs(x = "Standardized Residuals", y = "Residual Count", 
-       title = "Assumption 6 (Normality) Review") 
-
-ggplot(bkwd_4, aes(x = fitted(bkwd_4), y = rstandard(bkwd_4))) + 
-  geom_point() + 
-  geom_smooth() + 
-  labs(x = "Profit", y = "Standardized Residuals", 
-       title = "Constant Varaince Review") 
-
-
-
-
+anova(model_8b, model_9a)
+anova(model_3, model_9a)
+anova(base_model, model_9a)
