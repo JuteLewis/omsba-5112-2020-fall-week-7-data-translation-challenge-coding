@@ -141,11 +141,24 @@ income13_final <- income13 %>%
 # expenditure variables transforming and wrangling
 
 expenditure3 <- expenditure3 %>% unite(key, c("clust", "nh"), sep = "_") %>%
-  group_by(key, farmcd) %>%
+  mutate(farm_exp_code = case_when(farmcd == 1  ~ 'farm_code_1',
+                                   farmcd == 2  ~ 'farm_code_2',
+                                   farmcd == 3  ~ 'farm_code_3',
+                                   farmcd == 4  ~ 'farm_code_4',
+                                   farmcd == 5  ~ 'farm_code_5',
+                                   farmcd == 6  ~ 'farm_code_6',
+                                   farmcd == 7  ~ 'farm_code_7',
+                                   farmcd == 8  ~ 'farm_code_8',
+                                   farmcd == 9  ~ 'farm_code_9',
+                                   farmcd == 10 ~ 'farm_code_10',
+                                   farmcd == 11 ~ 'farm_code_11',
+                                   farmcd == 12 ~ 'farm_code_12',
+                                   farmcd == 13 ~ 'farm_code_13',)) %>%
+  group_by(key, farm_exp_code) %>%
   summarise(landexp_all_years = sum(landexp))
 
 expenditure3_final <- expenditure3 %>%
-  pivot_wider(id_cols = key, names_from = farmcd, values_from = landexp_all_years, values_fill = 0)
+  pivot_wider(id_cols = key, names_from = farm_exp_code, values_from = landexp_all_years, values_fill = 0)
 
 
 expenditure4 <- expenditure4 %>% unite(key, c("clust", "nh"), sep = "_")  %>%
@@ -218,7 +231,9 @@ expenditure7_final <- expenditure7 %>%
 inc_prof_data_frame <- left_join(profit,income10_final, by = "key") %>%
   left_join(income11_final, by = "key") %>% 
   left_join(income12_final, by = "key") %>%
-  left_join(income13_final, by = "key") 
+  left_join(income13_final, by = "key") %>%
+  left_join(expenditure3_final, by ="key") %>%
+  left_join(expenditure4_final, by = 'key')
 
 inc_prof_data_frame[is.na(inc_prof_data_frame)] = 0
 
@@ -254,3 +269,15 @@ profit_vs_inc_trans_crop <- lm(agri1c ~ Maize_flour_tc + Flour_from_other_grains
 summary(profit_vs_inc_trans_crop)
 
   
+# Regression models profit vs. expenditure
+# profit vs expenditure 3
+profit_vs_exp_renting_farm <- lm(agri1c ~ farm_code_1 + farm_code_2 + farm_code_3 + farm_code_4 + farm_code_5 + farm_code_6 + farm_code_7 +
+                                   farm_code_8 + farm_code_9 + farm_code_10 + farm_code_11 + farm_code_12 + farm_code_13,
+                                 data = inc_prof_data_frame)
+summary(profit_vs_exp_renting_farm)
+
+# profit vs expenditure 4
+profit_vs_exp_renting_farm <- lm(agri1c ~ Fertilizer (Inorganic) + Organic fertilizer +  Insecticides + Herbicides + Storage of crops +
+                                   Purchased seeds + Irrigation + Bags, containers, strings + Petrol/diesel/oil + Spare parts + Hired labour +
+                                   Transport of crops + Renting animals + Renting equipment + Hand tools local + Hand tools imported +
+                                   Repairs/maintenance + Other crop cost, data = inc_prof_data_frame)
