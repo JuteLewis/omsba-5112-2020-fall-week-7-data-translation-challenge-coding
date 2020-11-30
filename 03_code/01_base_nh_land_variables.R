@@ -162,24 +162,24 @@ expenditure3_final <- expenditure3 %>%
 
 
 expenditure4 <- expenditure4 %>% unite(key, c("clust", "nh"), sep = "_")  %>%
-  mutate(crops_exp_name  = case_when(crpexpcd == 1  ~'Fertilizer (Inorganic)',
-                                      crpexpcd == 2  ~'Organic fertilizer',
+  mutate(crops_exp_name  = case_when(crpexpcd == 1   ~'Fertilizer_Inorganic',
+                                      crpexpcd == 2  ~'Organic_fertilizer',
                                       crpexpcd == 3  ~'Insecticides',
                                       crpexpcd == 4  ~'Herbicides',
-                                      crpexpcd == 5  ~'Storage of crops',
-                                      crpexpcd == 6  ~'Purchased seeds',
+                                      crpexpcd == 5  ~'Storage_of_crops',
+                                      crpexpcd == 6  ~'Purchased_seeds',
                                       crpexpcd == 7  ~'Irrigation',
-                                      crpexpcd == 8  ~'Bags, containers, strings',
-                                      crpexpcd == 9 ~'Petrol/diesel/oil',
-                                      crpexpcd == 10 ~'Spare parts',
-                                      crpexpcd == 11 ~'Hired labour',
-                                      crpexpcd == 12 ~'Transport of crops',
-                                      crpexpcd == 13 ~'Renting animals',
-                                      crpexpcd == 14 ~'Renting equipment',
-                                      crpexpcd == 15 ~'Hand tools local',
-                                      crpexpcd == 16 ~'Hand tools imported',
-                                      crpexpcd == 17 ~'Repairs/maintenance',
-                                      crpexpcd == 18 ~'Other crop cost')) %>%
+                                      crpexpcd == 8  ~'Bags_containers_strings',
+                                      crpexpcd == 9  ~'Petrol_diesel_oil',
+                                      crpexpcd == 10 ~'Spare_parts',
+                                      crpexpcd == 11 ~'Hired_labour',
+                                      crpexpcd == 12 ~'Transport_of_crops',
+                                      crpexpcd == 13 ~'Renting_animals',
+                                      crpexpcd == 14 ~'Renting_equipment',
+                                      crpexpcd == 15 ~'Hand_tools_local',
+                                      crpexpcd == 16 ~'Hand_tools_imported',
+                                      crpexpcd == 17 ~'Repairs_maintenance',
+                                      crpexpcd == 18 ~'Other_crop_cost')) %>%
   group_by(key, crops_exp_name) %>%
   summarise(cropexp_all_years = sum(cropexp))    
 
@@ -188,27 +188,41 @@ expenditure4_final <- expenditure4 %>%
 
 
 expenditure5 <- expenditure5 %>% unite(key, c("clust", "nh"), sep = "_") %>%
-  group_by(key, crpexpcd) %>%
+  mutate(livsto_exp_name  = case_when(crpexpcd == 51 ~'livstc_51',
+                                      crpexpcd == 52 ~'livstc_52',
+                                      crpexpcd == 53 ~'livstc_53',
+                                      crpexpcd == 54 ~'livstc_54',
+                                      crpexpcd == 55 ~'livstc_55',
+                                      crpexpcd == 56 ~'livstc_56',
+                                      crpexpcd == 57 ~'livstc_57',
+                                      crpexpcd == 58 ~'livstc_58',
+                                      crpexpcd == 59 ~'livstc_59',
+                                      crpexpcd == 61 ~'livstc_61',
+                                      crpexpcd == 62 ~'livstc_62',
+                                      crpexpcd == 63 ~'livstc_63',
+                                      crpexpcd == 64 ~'livstc_64',
+                                      crpexpcd == 65 ~'livstc_65')) %>%
+  group_by(key, livsto_exp_name) %>%
   summarise(livexp_all_years = sum(livexp))
 
 expenditure5_final <- expenditure5 %>%
-  pivot_wider(id_cols = key, names_from = crpexpcd, values_from = livexp_all_years, values_fill = 0)
+  pivot_wider(id_cols = key, names_from = livsto_exp_name, values_from = livexp_all_years, values_fill = 0)
 
 
 expenditure6$fdprexp1 + expenditure6$fdprexp2 -> expenditure6$fdpr
 
 expenditure6 <- select(expenditure6, -fdprexp1, -fdprexp2) %>%
   unite(key, c("clust", "nh"), sep = "_") %>%
-  mutate(labor_exp_name  = case_when(proagrcd == 1  ~'Maize flour',
-                                     proagrcd == 2  ~'Flour from other grains',
-                                     proagrcd == 3  ~'Husked/polished rice',
-                                     proagrcd == 4  ~'Home brewed drink',
-                                     proagrcd == 5  ~'Cassava flour',
-                                     proagrcd == 6  ~'Shelled groundnut',
-                                     proagrcd == 7  ~'Processed fish',
+  mutate(labor_exp_name  = case_when(proagrcd == 1  ~'Maize_flour',
+                                     proagrcd == 2  ~'Flour_from_other_grains',
+                                     proagrcd == 3  ~'Husked_polished_rice',
+                                     proagrcd == 4  ~'Home_brewed_drink',
+                                     proagrcd == 5  ~'Cassava_flour',
+                                     proagrcd == 6  ~'Shelled_groundnut',
+                                     proagrcd == 7  ~'Processed_fish',
                                      proagrcd == 8  ~'Gari',
                                      proagrcd == 9  ~'Sheabutter',
-                                     proagrcd == 10 ~'Other nuts',
+                                     proagrcd == 10 ~'Other_nuts',
                                      proagrcd == 11 ~'Other')) %>%
   group_by(key, labor_exp_name) %>%
   summarise(fdpr_all_years = sum(fdpr))
@@ -219,11 +233,134 @@ expenditure6_final <- expenditure6 %>%
 
 expenditure7<- select(expenditure7, -months) %>%
   unite(key, c("clust", "nh"), sep = "_") %>%
-  group_by(key, homagrcd) %>%
+  mutate(consumptionr_exp_name  = case_when(homagrcd == 1  ~'consumption_home_1',
+                                            homagrcd == 2  ~'consumption_home_2',
+                                            homagrcd == 3  ~'consumption_home_3',
+                                            homagrcd == 4  ~'consumption_home_4',
+                                            homagrcd == 5  ~'consumption_home_5',
+                                            homagrcd == 6  ~'consumption_home_6',
+                                            homagrcd == 7  ~'consumption_home_7',
+                                            homagrcd == 8  ~'consumption_home_8',
+                                            homagrcd == 9  ~'consumption_home_9',
+                                            homagrcd == 10 ~'consumption_home_10',
+                                            homagrcd == 11 ~'consumption_home_11',
+                                            homagrcd == 12 ~'consumption_home_12',
+                                            homagrcd == 13 ~'consumption_home_13',
+                                            homagrcd == 14 ~'consumption_home_14',
+                                            homagrcd == 15 ~'consumption_home_15',
+                                            homagrcd == 16 ~'consumption_home_16',
+                                            homagrcd == 17 ~'consumption_home_17',
+                                            homagrcd == 20 ~'consumption_home_20',
+                                            homagrcd == 21 ~'consumption_home_21',
+                                            homagrcd == 22 ~'consumption_home_22',
+                                            homagrcd == 23 ~'consumption_home_23',
+                                            homagrcd == 24 ~'consumption_home_24',
+                                            homagrcd == 25 ~'consumption_home_25',
+                                            homagrcd == 26 ~'consumption_home_26',
+                                            homagrcd == 27 ~'consumption_home_27',
+                                            homagrcd == 28 ~'consumption_home_28',
+                                            homagrcd == 29 ~'consumption_home_29',
+                                            homagrcd == 30 ~'consumption_home_30',
+                                            homagrcd == 31 ~'consumption_home_31',
+                                            homagrcd == 31 ~'consumption_home_31',
+                                            homagrcd == 32 ~'consumption_home_32',
+                                            homagrcd == 33 ~'consumption_home_33',
+                                            homagrcd == 34 ~'consumption_home_34',
+                                            homagrcd == 35 ~'consumption_home_35',
+                                            homagrcd == 36 ~'consumption_home_36',
+                                            homagrcd == 37 ~'consumption_home_37',
+                                            homagrcd == 40 ~'consumption_home_40',
+                                            homagrcd == 41 ~'consumption_home_41',
+                                            homagrcd == 42 ~'consumption_home_42',
+                                            homagrcd == 43 ~'consumption_home_43',
+                                            homagrcd == 44 ~'consumption_home_44',
+                                            homagrcd == 45 ~'consumption_home_45',
+                                            homagrcd == 46 ~'consumption_home_46',
+                                            homagrcd == 47 ~'consumption_home_47',
+                                            homagrcd == 48 ~'consumption_home_48',
+                                            homagrcd == 60 ~'consumption_home_60',
+                                            homagrcd == 61 ~'consumption_home_61',
+                                            homagrcd == 62 ~'consumption_home_62',
+                                            homagrcd == 63 ~'consumption_home_63',
+                                            homagrcd == 64 ~'consumption_home_64',
+                                            homagrcd == 65 ~'consumption_home_65',
+                                            homagrcd == 66 ~'consumption_home_66',
+                                            homagrcd == 67 ~'consumption_home_67',
+                                            homagrcd == 68 ~'consumption_home_68',
+                                            homagrcd == 69 ~'consumption_home_69',
+                                            homagrcd == 70 ~'consumption_home_70',
+                                            homagrcd == 71 ~'consumption_home_71',
+                                            homagrcd == 90 ~'consumption_home_90',
+                                            homagrcd == 91 ~'consumption_home_91')) %>%
+  group_by(key, consumptionr_exp_name) %>%
   summarise(hp_all_years = sum(hp))
 
 expenditure7_final <- expenditure7 %>%
-  pivot_wider(id_cols = key, names_from = homagrcd, values_from = hp_all_years, values_fill = 0)
+  pivot_wider(id_cols = key, names_from = consumptionr_exp_name, values_from = hp_all_years, values_fill = 0)
+
+
+# Aggregate(Agriculture land, livestock and Fishing, Equipment) variables transforming and wrangling
+
+#plot details
+
+agri_plot <- select(agri_plot, clust, nh, s8bq4a, s8bq4b, s8bq5) %>%
+  unite(key, c("clust", "nh"), sep = "_") %>%
+  mutate(farm_unit_measure = case_when(s8bq4b == 1 ~ 'Acres',
+                                       s8bq4b == 2 ~ 'Poles',
+                                       s8bq4b == 3 ~ 'Ropes',
+                                       s8bq4b == 4 ~ 'Others')) %>%
+  group_by(key, farm_unit_measure)%>%
+  summarise(space = sum(s8bq4a))
+  
+agri_plot <- agri_plot %>%
+  pivot_wider(id_cols = key, names_from = farm_unit_measure, values_from = space, values_fill = 0) 
+  
+agri_plot_final <-mutate(agri_plot,Poles_to_Acres = Poles/210) %>% mutate(Ropes_to_Acres = Ropes/9) %>%
+  select(key, Acres, Poles_to_Acres, Ropes_to_Acres) %>% mutate(space_in_acres = Acres + Poles_to_Acres + Ropes_to_Acres) %>%
+  select(key, space_in_acres)
+
+
+#land details
+agri_land_final <- select(agri_land, nh, clust, s8aq1) %>% unite(key, c("clust", "nh"), sep = "_")
+
+
+#live stock details
+agri_livestock_Fishing <- select(agri_livestock_Fishing, livstcd, nh, clust, s8aq22a) %>% 
+  unite(key, c("clust", "nh"), sep = "_") %>%   mutate(live_stock_name = case_when(livstcd == 1 ~  'Draught_animals',
+                                                                                   livstcd == 2 ~  'Cattle_including_cows',
+                                                                                   livstcd == 3 ~  'Sheep',
+                                                                                   livstcd == 5 ~  'Goats',
+                                                                                   livstcd == 6 ~  'Pigs',
+                                                                                   livstcd == 7 ~  'Rabbits',
+                                                                                   livstcd == 8 ~  'Chicken',
+                                                                                   livstcd == 9 ~  'Other_poultry',
+                                                                                   livstcd == 10 ~ 'Other_livestock',
+                                                                                   livstcd == 11 ~ 'Fish',
+                                                                                   livstcd == 12 ~ 'Crab',
+                                                                                   livstcd == 12 ~ 'Other')) 
+
+agri_livestock_Fishing_final <- agri_livestock_Fishing %>%
+  pivot_wider(id_cols = key, names_from = live_stock_name, values_from = s8aq22a, values_fill = 0)
+
+# equipment details
+agri_equipment <- select(agri_equipment, nh, clust, eqcdown, s8aq34) %>% unite(key, c("clust", "nh"), sep = "_") %>%
+  mutate(equipment_name = case_when(eqcdown == 21 ~ 'Tractor',
+                                     eqcdown == 22 ~ 'Plough',
+                                     eqcdown == 31 ~ 'Trailer/Cart',
+                                     eqcdown == 41 ~ 'Other animal drawn equipment',
+                                     eqcdown == 42 ~ 'Other tractor drawn equipment',
+                                     eqcdown == 51 ~ 'Sprayer',
+                                     eqcdown == 61 ~ 'Canoe',
+                                     eqcdown == 62 ~ 'Other_poultry',
+                                     eqcdown == 63 ~ 'Net',
+                                     eqcdown == 64 ~ 'Safety equip',
+                                     eqcdown == 65 ~ 'Other')) %>%
+  group_by(key, equipment_name)%>%
+  summarise(number_of_equipment = sum(s8aq34))
+
+agri_equipment_final <- agri_equipment %>%
+  pivot_wider(id_cols = key, names_from = equipment_name, values_from = number_of_equipment, values_fill = 0)
+
 
 
 
@@ -232,8 +369,15 @@ inc_prof_data_frame <- left_join(profit,income10_final, by = "key") %>%
   left_join(income11_final, by = "key") %>% 
   left_join(income12_final, by = "key") %>%
   left_join(income13_final, by = "key") %>%
-  left_join(expenditure3_final, by ="key") %>%
-  left_join(expenditure4_final, by = 'key')
+  left_join(expenditure3_final, by ="key")  %>%
+  left_join(expenditure4_final, by = "key") %>%
+  left_join(expenditure5_final, by = "key") %>%
+  left_join(expenditure6_final, by = "key") %>%
+  left_join(expenditure7_final, by = "key") %>%
+  left_join(agri_plot_final, by = "key")       %>%
+  left_join(agri_land_final, by = "key")       %>%
+  left_join(agri_equipment_final, by = "key")  %>%
+  left_join(agri_livestock_Fishing_final, by = "key")
 
 inc_prof_data_frame[is.na(inc_prof_data_frame)] = 0
 
@@ -277,7 +421,43 @@ profit_vs_exp_renting_farm <- lm(agri1c ~ farm_code_1 + farm_code_2 + farm_code_
 summary(profit_vs_exp_renting_farm)
 
 # profit vs expenditure 4
-profit_vs_exp_renting_farm <- lm(agri1c ~ Fertilizer (Inorganic) + Organic fertilizer +  Insecticides + Herbicides + Storage of crops +
-                                   Purchased seeds + Irrigation + Bags, containers, strings + Petrol/diesel/oil + Spare parts + Hired labour +
-                                   Transport of crops + Renting animals + Renting equipment + Hand tools local + Hand tools imported +
-                                   Repairs/maintenance + Other crop cost, data = inc_prof_data_frame)
+profit_vs_exp_crops_input <- lm(agri1c ~ Fertilizer_Inorganic + Organic_fertilizer + Insecticides + Herbicides + Storage_of_crops +
+                                  Purchased_seeds + Irrigation + Bags_containers_strings + Petrol_diesel_oil + Spare_parts + Hired_labour +
+                                  Transport_of_crops + Renting_animals + Renting_equipment + Hand_tools_local + Hand_tools_imported +
+                                  Repairs_maintenance + Other_crop_cost, data = inc_prof_data_frame)
+summary(profit_vs_exp_crops_input)
+
+# profit vs expenditure 5
+profit_vs_exp_livsto_input <- lm(agri1c ~ livstc_51 + livstc_52 + livstc_53 + livstc_54 + livstc_55 + livstc_56 + livstc_57 +
+                                 livstc_58 + livstc_59 + livstc_61 + livstc_62 + livstc_63 + livstc_64 +
+                                 livstc_65, data = inc_prof_data_frame)
+summary(profit_vs_exp_livsto_input)
+
+# profit vs expenditure 6
+profit_vs_exp_fooproc_input <- lm(agri1c ~ Maize_flour + Flour_from_other_grains + Husked_polished_rice + Home_brewed_drink +
+                                  Cassava_flour + Shelled_groundnut + Processed_fish + Gari + Sheabutter + Other_nuts +
+                                  Other, data = inc_prof_data_frame)
+summary(profit_vs_exp_fooproc_input)
+
+# profit vs expenditure 7
+profit_vs_exp_homcons_input <- lm(agri1c ~ consumption_home_1 + consumption_home_2 + consumption_home_3 + consumption_home_4 +
+                                  consumption_home_5  + consumption_home_6  + consumption_home_7  + consumption_home_8  + consumption_home_9 +
+                                  consumption_home_10 + consumption_home_11 + consumption_home_12 + consumption_home_13 + consumption_home_14 +
+                                  consumption_home_15 + consumption_home_16 + consumption_home_17 + consumption_home_20 + consumption_home_21 +
+                                  consumption_home_22 + consumption_home_23 + consumption_home_24 + consumption_home_25 + consumption_home_26 +
+                                  consumption_home_27 + consumption_home_28 + consumption_home_29 + consumption_home_30 + consumption_home_31 +
+                                  consumption_home_31 + consumption_home_32 + consumption_home_33 + consumption_home_34 + consumption_home_35 +
+                                  consumption_home_36 + consumption_home_37 + consumption_home_40 + consumption_home_41 + consumption_home_42 +
+                                  consumption_home_43 + consumption_home_44 + consumption_home_45 + consumption_home_46 + consumption_home_47 +
+                                  consumption_home_48 + consumption_home_60 + consumption_home_61 + consumption_home_62 + consumption_home_63 +
+                                  consumption_home_64 + consumption_home_65 + consumption_home_66 + consumption_home_67 + consumption_home_68 + 
+                                  consumption_home_69 + consumption_home_70 + consumption_home_71 + consumption_home_90 + consumption_home_91, data = inc_prof_data_frame)
+
+summary(profit_vs_exp_homcons_input)
+
+# Regression models profit vs. aggregates
+# profit vs land plot
+
+profit_vs_land_plot <- lm(agri1c ~ space_in_acres, data = inc_prof_data_frame)
+summary(profit_vs_land_plot)
+
