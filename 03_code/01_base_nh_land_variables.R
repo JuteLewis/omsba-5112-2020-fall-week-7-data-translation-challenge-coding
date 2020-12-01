@@ -1,7 +1,5 @@
 library(tidyverse)
 library(haven)
-library(ggplot2)
-library(dplyr)
 
 
 #general agriculture income variables
@@ -326,17 +324,17 @@ agri_land_final <- select(agri_land, nh, clust, s8aq1) %>% unite(key, c("clust",
 
 #live stock details
 agri_livestock_Fishing <- select(agri_livestock_Fishing, livstcd, nh, clust, s8aq22a) %>% 
-  unite(key, c("clust", "nh"), sep = "_") %>%   mutate(live_stock_name = case_when(livstcd == 1 ~  'Draught_animals',
-                                                                                   livstcd == 2 ~  'Cattle_including_cows',
-                                                                                   livstcd == 3 ~  'Sheep',
-                                                                                   livstcd == 5 ~  'Goats',
-                                                                                   livstcd == 6 ~  'Pigs',
-                                                                                   livstcd == 7 ~  'Rabbits',
-                                                                                   livstcd == 8 ~  'Chicken',
-                                                                                   livstcd == 9 ~  'Other_poultry',
-                                                                                   livstcd == 10 ~ 'Other_livestock',
-                                                                                   livstcd == 11 ~ 'Fish',
-                                                                                   livstcd == 12 ~ 'Crab',
+  unite(key, c("clust", "nh"), sep = "_") %>%   mutate(live_stock_name = case_when(livstcd == 1  ~  'Draught_animals',
+                                                                                   livstcd == 2  ~  'Cattle_including_cows',
+                                                                                   livstcd == 3  ~  'Sheep',
+                                                                                   livstcd == 4  ~  'Goats',
+                                                                                   livstcd == 5  ~  'Pigs',
+                                                                                   livstcd == 6  ~  'Rabbits',
+                                                                                   livstcd == 7  ~  'Chicken',
+                                                                                   livstcd == 8  ~  'Other_poultry',
+                                                                                   livstcd == 9  ~  'Other_livestock',
+                                                                                   livstcd == 10 ~ 'Fish',
+                                                                                   livstcd == 11 ~ 'Crab',
                                                                                    livstcd == 12 ~ 'Other')) 
 
 agri_livestock_Fishing_final <- agri_livestock_Fishing %>%
@@ -344,17 +342,18 @@ agri_livestock_Fishing_final <- agri_livestock_Fishing %>%
 
 # equipment details
 agri_equipment <- select(agri_equipment, nh, clust, eqcdown, s8aq34) %>% unite(key, c("clust", "nh"), sep = "_") %>%
-  mutate(equipment_name = case_when(eqcdown == 21 ~ 'Tractor',
+  mutate(equipment_name = case_when( eqcdown == 21 ~ 'Tractor',
                                      eqcdown == 22 ~ 'Plough',
-                                     eqcdown == 31 ~ 'Trailer/Cart',
-                                     eqcdown == 41 ~ 'Other animal drawn equipment',
-                                     eqcdown == 42 ~ 'Other tractor drawn equipment',
+                                     eqcdown == 31 ~ 'Trailer_Cart',
+                                     eqcdown == 41 ~ 'Other_animal_drawn_equipment',
+                                     eqcdown == 42 ~ 'Other_tractor_drawn_equipment',
                                      eqcdown == 51 ~ 'Sprayer',
-                                     eqcdown == 61 ~ 'Canoe',
-                                     eqcdown == 62 ~ 'Other_poultry',
+                                     eqcdown == 61 ~ 'Outboard_motor',
+                                     eqcdown == 62 ~ 'Canoe',
                                      eqcdown == 63 ~ 'Net',
-                                     eqcdown == 64 ~ 'Safety equip',
+                                     eqcdown == 64 ~ 'Safety_equip',
                                      eqcdown == 65 ~ 'Other')) %>%
+
   group_by(key, equipment_name)%>%
   summarise(number_of_equipment = sum(s8aq34))
 
@@ -390,7 +389,6 @@ profit_vs_inc_cash_crops <- lm(agri1c ~ Cocoa_c + Coffee_c + Rubber_c + Coconut_
                                  Rice_c + Guinea_corn_Sorghum_millet_Ropes_c + Tomatoes + Okro_c + Garden_egg_Egg_plant_c +
                                  Beans_peas + Pepper_c + Leafy_vegetables_c + Other_crops_c +
                                  Onion_c + Mango_c, data = inc_prof_data_frame)
-summary(profit_vs_inc_cash_crops)
 
 
 # profit vs. income 11
@@ -398,19 +396,18 @@ profit_vs_inc_roots_fruit_vegetables <- lm(agri1c ~ Oil_palm_r + Plantain_r + Ba
                                              Pineapple_r + Cassava_r + Yam_r + Cocoyam_r + Potatoes_r + Tomatoes_r + Okro_r +
                                              Garden_egg_Egg_plant_r + Pepper_r + Leafy_vegetables_r + Other_vegetables_r + Onion_r +
                                              Avocado_pear_r + Mango_r + Pawpaw_r, data = inc_prof_data_frame)
-summary(profit_vs_inc_roots_fruit_vegetables)
 
 
 # profit vs. income 12
 profit_vs_inc_other_agri <- lm(agri1c ~ othaginc, data = inc_prof_data_frame)
-summary(profit_vs_inc_roots_fruit_vegetables)
+
 
 
 # profit vs. income 13
 profit_vs_inc_trans_crop <- lm(agri1c ~ Maize_flour_tc + Flour_from_other_grains_tc + Husked_polished_riceHusked_polished_rice_tc +
                                  Home_brewed_drink_tc + Cassava_flour_tc + Shelled_groundnut_tc + Processed_fish_tc +
                                  Gari_tc + Sheabutter_tc + Other_nuts_tc + Other_tc, data = inc_prof_data_frame)
-summary(profit_vs_inc_trans_crop)
+
 
   
 # Regression models profit vs. expenditure
@@ -418,26 +415,26 @@ summary(profit_vs_inc_trans_crop)
 profit_vs_exp_renting_farm <- lm(agri1c ~ farm_code_1 + farm_code_2 + farm_code_3 + farm_code_4 + farm_code_5 + farm_code_6 + farm_code_7 +
                                    farm_code_8 + farm_code_9 + farm_code_10 + farm_code_11 + farm_code_12 + farm_code_13,
                                  data = inc_prof_data_frame)
-summary(profit_vs_exp_renting_farm)
+
 
 # profit vs expenditure 4
 profit_vs_exp_crops_input <- lm(agri1c ~ Fertilizer_Inorganic + Organic_fertilizer + Insecticides + Herbicides + Storage_of_crops +
                                   Purchased_seeds + Irrigation + Bags_containers_strings + Petrol_diesel_oil + Spare_parts + Hired_labour +
                                   Transport_of_crops + Renting_animals + Renting_equipment + Hand_tools_local + Hand_tools_imported +
                                   Repairs_maintenance + Other_crop_cost, data = inc_prof_data_frame)
-summary(profit_vs_exp_crops_input)
+
 
 # profit vs expenditure 5
 profit_vs_exp_livsto_input <- lm(agri1c ~ livstc_51 + livstc_52 + livstc_53 + livstc_54 + livstc_55 + livstc_56 + livstc_57 +
                                  livstc_58 + livstc_59 + livstc_61 + livstc_62 + livstc_63 + livstc_64 +
                                  livstc_65, data = inc_prof_data_frame)
-summary(profit_vs_exp_livsto_input)
+
 
 # profit vs expenditure 6
 profit_vs_exp_fooproc_input <- lm(agri1c ~ Maize_flour + Flour_from_other_grains + Husked_polished_rice + Home_brewed_drink +
                                   Cassava_flour + Shelled_groundnut + Processed_fish + Gari + Sheabutter + Other_nuts +
                                   Other, data = inc_prof_data_frame)
-summary(profit_vs_exp_fooproc_input)
+
 
 # profit vs expenditure 7
 profit_vs_exp_homcons_input <- lm(agri1c ~ consumption_home_1 + consumption_home_2 + consumption_home_3 + consumption_home_4 +
@@ -453,11 +450,42 @@ profit_vs_exp_homcons_input <- lm(agri1c ~ consumption_home_1 + consumption_home
                                   consumption_home_64 + consumption_home_65 + consumption_home_66 + consumption_home_67 + consumption_home_68 + 
                                   consumption_home_69 + consumption_home_70 + consumption_home_71 + consumption_home_90 + consumption_home_91, data = inc_prof_data_frame)
 
-summary(profit_vs_exp_homcons_input)
+
 
 # Regression models profit vs. aggregates
 # profit vs land plot
-
 profit_vs_land_plot <- lm(agri1c ~ space_in_acres, data = inc_prof_data_frame)
-summary(profit_vs_land_plot)
 
+
+# profit vs agriculture land
+profit_vs_agri_land <- lm(agri1c ~ s8aq1, data = inc_prof_data_frame)
+
+
+# profit vs live stock and fishing
+profit_vs_livst_fishing <- lm(agri1c ~ Draught_animals + Cattle_including_cows + Sheep + Goats + Pigs + Rabbits +
+                              Chicken + Other_poultry + Other_livestock + Fish + Crab + Other, data = inc_prof_data_frame)
+
+
+# profit vs agriculture equipment
+profit_vs_agri_equip <- lm(agri1c ~ Tractor + Plough + Trailer_Cart + Other_animal_drawn_equipment + Other_tractor_drawn_equipment + 
+                             Sprayer + Outboard_motor + Canoe + Net + Safety_equip + Other, data = inc_prof_data_frame)
+
+
+  
+# Summary of models 
+
+summary(profit_vs_inc_cash_crops)
+summary(profit_vs_inc_roots_fruit_vegetables)
+summary(profit_vs_inc_roots_fruit_vegetables)
+summary(profit_vs_inc_trans_crop)
+
+summary(profit_vs_exp_renting_farm)
+summary(profit_vs_exp_crops_input)
+summary(profit_vs_exp_livsto_input)
+summary(profit_vs_exp_fooproc_input)
+summary(profit_vs_exp_homcons_input)
+
+summary(profit_vs_land_plot)
+summary(profit_vs_agri_land)
+summary(profit_vs_livst_fishing)
+summary(profit_vs_agri_equip)
