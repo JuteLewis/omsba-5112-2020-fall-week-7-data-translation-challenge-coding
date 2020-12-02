@@ -33,5 +33,5 @@ nh_exp_profile_base_wip <- nh_exp_profile_base_wip %>%  left_join(nh_rent_wip)
 nh_exp_profile_base_wip <- nh_exp_profile_base_wip %>% left_join(nh_crop_wip)
 nh_exp_profile_base_wip <- nh_exp_profile_base_wip %>% left_join(nh_consume_wip)
 nh_exp_profile_base <- nh_exp_profile_base_wip %>% left_join(nh_food_wip)
-
+ 
 
