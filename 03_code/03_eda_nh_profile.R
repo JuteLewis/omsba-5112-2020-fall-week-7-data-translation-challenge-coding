@@ -1,6 +1,6 @@
-# A mom texts, “Hi! Son, what does IDK, LY, & TTYL mean?” He texts back, 
-# “I Don’t Know, Love You, & Talk To You Later.” The mom texts him, 
-# “It’s ok, don’t worry about it. I’ll ask your sister, love you too.”
+# Following code builds initial library set ----
+library(tidyverse)
+library(haven)
 
 # Initial Descriptive Stat of nh-profile_base ----
 summary(nh_profile_base)

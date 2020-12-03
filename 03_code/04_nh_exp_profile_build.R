@@ -1,3 +1,7 @@
+# Following code builds initial library set ----
+library(tidyverse)
+library(haven)
+
 # Data Loading Code ----
 # Following code loads subagg 22 into a rent wip df
 nh_rent_wip <- read_dta("01_raw_data/glss4_new/aggregates/subagg22.dta")

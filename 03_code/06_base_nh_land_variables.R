@@ -4,31 +4,31 @@ library(haven)
 
 #general agriculture income variables
 
-profit <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/agg2.dta') %>%
+profit <- read_dta('01_raw_data/glss4_new/aggregates/agg2.dta') %>%
   unite(key, c("clust", "nh"), sep = "_") %>%
   select("key","agri1c")
 
 
 # load data
 # specific agriculture income variables
-income10 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/inc10.dta')  # Revenue from sale of cash crops
-income11 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/inc11.dta')  # Revenue from sale of roots/fruit/vegetables (at level of each individual crop)
-income12 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/inc12.dta')  # Revenue from other agricultural income (at household level)
-income13 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/inc13.dta')  # Revenue from transformed crops (at level of each individual product)
+income10 <- read_dta('01_raw_data/glss4_new/aggregates/inc10.dta')  # Revenue from sale of cash crops
+income11 <- read_dta('01_raw_data/glss4_new/aggregates/inc11.dta')  # Revenue from sale of roots/fruit/vegetables (at level of each individual crop)
+income12 <- read_dta('01_raw_data/glss4_new/aggregates/inc12.dta')  # Revenue from other agricultural income (at household level)
+income13 <- read_dta('01_raw_data/glss4_new/aggregates/inc13.dta')  # Revenue from transformed crops (at level of each individual product)
 
 # specific agriculture expenditure variables
-expenditure3 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/exp3.dta')  # Expenditure on renting farm land (at level of individual farm)
-expenditure4 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/exp4.dta')  # Expenditure on crop inputs (at level of each individual input) 
-expenditure5 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/exp5.dta')  # Expenditure on livestock inputs (at level of each individual input)
-expenditure6 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/exp6.dta')  # Labor costs on food processing
-expenditure7 <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/aggregates/exp7.dta')  # Consumption of home production
+expenditure3 <- read_dta('01_raw_data/glss4_new/aggregates/exp3.dta')  # Expenditure on renting farm land (at level of individual farm)
+expenditure4 <- read_dta('01_raw_data/glss4_new/aggregates/exp4.dta')  # Expenditure on crop inputs (at level of each individual input) 
+expenditure5 <- read_dta('01_raw_data/glss4_new/aggregates/exp5.dta')  # Expenditure on livestock inputs (at level of each individual input)
+expenditure6 <- read_dta('01_raw_data/glss4_new/aggregates/exp6.dta')  # Labor costs on food processing
+expenditure7 <- read_dta('01_raw_data/glss4_new/aggregates/exp7.dta')  # Consumption of home production
 
 # Agriculture land, livestock and Fishing, Equipment data
 
-agri_plot <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/sec8b.dta')                  #  Plot details
-agri_land <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/sec8a1.dta')                 #  Agriculture Land
-agri_livestock_Fishing <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/sec8a2.dta')    #  Livestock and Fishing
-agri_equipment <- read_dta('E:/R_projects/week_7_assignment/glss4_new/glss4_new/sec8a3.dta')            #  Agriculture  equipment 
+agri_plot <- read_dta('01_raw_data/glss4_new/sec8b.dta')                  #  Plot details
+agri_land <- read_dta('01_raw_data/glss4_new/sec8a1.dta')                 #  Agriculture Land
+agri_livestock_Fishing <- read_dta('01_raw_data/glss4_new/sec8a2.dta')    #  Livestock and Fishing
+agri_equipment <- read_dta('01_raw_data/glss4_new/sec8a3.dta')            #  Agriculture  equipment 
 
 
 # data transforming & wrangling 

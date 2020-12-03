@@ -1,3 +1,6 @@
+# Following code builds initial library set ----
+library(tidyverse)
+library(haven)
 
 # Data Loading Code ----
 # Following code loads SEC1 into a base general family roster data frame
