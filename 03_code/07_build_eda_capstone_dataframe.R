@@ -214,7 +214,7 @@ ggplot(agr_prod_profit_test3f, aes(x = fitted(agr_prod_profit_test3f), y = rstan
   labs(x = "Profit", y = "Standardized Residuals", 
        title = "agr_prod_profit_test3f Constant Variance Review")
 
-# Following implements code that calculates and displays informaiton on the model's
+# Following implements code that calculates and displays information on the model's
 # polynomials 
 
 lnd_x <- (coef(agr_prod_profit_test3f)["space_in_acres"] / 

@@ -42,13 +42,16 @@ nh_roster_sex_wip <- select(nh_roster_wip, "nh", "clust", factor("sex")) %>%
 nh_ed_wip <- select(nh_ed_wip, "nh", "clust", "pid", factor("s2aq2")) %>% 
   na.omit() %>% 
   unite(key, c("clust", "nh"), sep = "_") %>% 
-  group_by(key)
+  group_by(key) %>% 
+  rename(education_completed = "s2aq2")
 
 nh_lit_wip <- select(nh_lit_wip, "nh", "clust", "pid", factor("s2cq1"), factor("s2cq2"), 
   factor("s2cq3"), factor("s2cq4"), factor("s2cq5")) %>% 
   na.omit() %>% 
   unite(key, c("clust", "nh"), sep = "_") %>% 
-  group_by(key)
+  group_by(key) %>% 
+  rename(read_eng = "s2cq1", read_ghanaian = "s2cq2", write_eng = "s2cq3", write_ghanaian = "s2cq4",
+         written_cal = "s2cq5")
 
 nh_field_help_wip <- select(nh_field_help_wip,"nh", "clust","s8cq17a", 
   "s8cq17b") %>% 
@@ -77,8 +80,8 @@ nh_profile_base_wip[is.na(nh_profile_base_wip)] = 0
 # The following code reorganizes the order of the dataframe's variables
 nh_profile_base <- nh_profile_base_wip[c("key", "region", "district", "ez", "loc2", 
                                          "male", "female", "family_size", "av_hh_age", 
-                                         "pid", "s2aq2", "s2cq1", "s2cq2", "s2cq3", 
-                                         "s2cq4", "s2cq5", "male_help","female_help", "profit")]
+                                         "pid", "education_completed", "read_eng", "read_ghanaian", "write_eng", 
+                                         "write_ghanaian", "written_cal", "male_help","female_help", "profit")]
 
 
 
